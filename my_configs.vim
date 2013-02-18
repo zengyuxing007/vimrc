@@ -13,7 +13,7 @@ map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune  -o -name "*.mstg" -o -name "*.pm" -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.lua" -o -name "*.xml" > cscope.    files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.lua" -o -name "*.xml" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -23,7 +23,7 @@ endfun
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
 colorscheme desert
-set path+=~/Work/source/**/*
+set path+=~/wushuang/**/*
 
 
 " a.vim
@@ -78,14 +78,14 @@ if has("cscope")
   set csverb
 endif
 
-nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 
 " autoloading cscope db
@@ -117,3 +117,7 @@ au FileType html set syntax=html
 " C/C++
 """""""""""""""""""""""""""""""
 autocmd FileType c,cpp  map <buffer> <leader><space> :make<cr>
+
+"
+set fileencoding=utf8
+set fileencodings=utf-8,gb2312,default
