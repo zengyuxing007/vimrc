@@ -121,3 +121,6 @@ autocmd FileType c,cpp  map <buffer> <leader><space> :make<cr>
 "
 set fileencoding=utf8
 set fileencodings=utf-8,gb2312,default
+
+" git blame 
+vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
