@@ -1,3 +1,5 @@
+let g:fencview_autodetect=1
+
 set term=dtterm
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
@@ -11,6 +13,43 @@ map <S-m> :tabprev<cr>
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 
 
+
+""""""""""""""""""""""""""""""""""""
+" find module in perl INC and edit "
+""""""""""""""""""""""""""""""""""""
+function! GetCursorModuleName()
+    let cw = substitute( expand("<cWORD>"), '.\{-}\(\(\w\+\)\(::\w\+\)*\).*$', '\1', '' )
+    return cw
+endfunction
+
+function! TranslateModuleName(n)
+    return substitute( a:n, '::', '/', 'g' ) . '.pm'
+endfunction
+
+function! GetPerlLibPaths()
+    let out = system('perl -e ''print join "\n", @INC''')
+    let paths = split( out, "\n" )
+    return paths
+endfunction
+
+function! FindModuleFileInPaths()
+    let paths = [ 'lib' ] + ['t/lib'] + GetPerlLibPaths()
+    let fname = TranslateModuleName( GetCursorModuleName() )
+
+    for p in paths
+        let f = p . '/' . fname
+        if filereadable(f)
+            exec "tabnew " . f
+            return 1
+        endif
+    endfor
+
+    echo "File not found: " . fname
+endfunction
+
+nmap fm :call FindModuleFileInPaths() <cr>
+
+
 " make tags
 fun! MAKETAGS()
 :!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.lua" -o -name "*.xml" > cscope.files
@@ -22,8 +61,8 @@ endfun
 
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
-colorscheme desert
-set path+=~/wushuang/**/*
+colorscheme darkblue
+set path+=~/openapi/pfsys-Chariot2/**/*
 
 
 " a.vim
@@ -37,6 +76,7 @@ let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
 map <C-P> :!/usr/bin/php5 -f %<CR>
 autocmd BufNewFile,Bufread *.ros,*.inc,*.php set keywordprg=pman
 
+
 function! JesseDebugRun(cmd)
     :w
     execute '!' . a:cmd . ' %'
@@ -48,6 +88,7 @@ au FileType python map <F5> :call JesseDebugRun('python')<cr>
 au FileType python imap <F5> <Esc>:call JesseDebugRun('python')<cr>
 au FileType perl map <F5> :call JesseDebugRun('perl')<cr>
 au FileType perl imap <F5> <Esc>:call JesseDebugRun('perl')<cr>
+
 
 au BufRead,BufNewFile *.thrift set filetype=thrift
 au! Syntax thrift source ~/.vim/plugin/thrift.vim
@@ -67,7 +108,11 @@ command! -nargs=1 Pme call OpenPerlModule(<f-args>)
 " cscope setting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("cscope")
-  set csprg=/usr/bin/cscope
+  if MySys() == "linux"
+    set csprg=/usr/bin/cscope
+  else
+    set csprg=cscope
+  endif
   set csto=1
   set cst
   set nocsverb
@@ -92,10 +137,10 @@ nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 function! LoadCscope()
    let db = findfile("cscope.out",".;")
    if(!empty(db))
-    let path = strpart(db,0,match(db,"/cscope.out$"))
-    set nocsverb
-    exe "cs add " . db . " " . path
-    set csverb
+	let path = strpart(db,0,match(db,"/cscope.out$"))
+	set nocsverb
+	exe "cs add " . db . " " . path
+	set csverb
     endif
 endfunction
 au BufEnter /* call LoadCscope()
@@ -112,16 +157,17 @@ autocmd FileType vim map <buffer> <leader><space> :w!<cr>:source %<cr>
 au FileType html set ft=xml
 au FileType html set syntax=html
 
-
 """"""""""""""""""""""""""""""
 " C/C++
 """""""""""""""""""""""""""""""
 autocmd FileType c,cpp  map <buffer> <leader><space> :make<cr>
 
+"file encoding auto detect
+map ,t :FencAutoDetect<cr>
+nmap ,t :FencAutoDetect<cr>
 "
 set fileencoding=utf8
 set fileencodings=utf-8,gb2312,default
 
 " git blame 
 vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
-""
