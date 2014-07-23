@@ -18,6 +18,11 @@ au FileType python map <buffer> <leader>2 /def
 au FileType python map <buffer> <leader>C ?class 
 au FileType python map <buffer> <leader>D ?def 
 
+au BufNewFile,BufRead *.psgi setf perl
+au BufNewFile,BufRead *.perl setf perl
+au BufNewFile,BufRead *.t setf perl
+
+
 
 """"""""""""""""""""""""""""""
 " => JavaScript section
