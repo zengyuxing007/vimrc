@@ -33,7 +33,7 @@ function! GetPerlLibPaths()
 endfunction
 
 function! FindModuleFileInPaths()
-    let paths = [ 'lib' ] + ['t/lib'] + GetPerlLibPaths()
+    let paths = [ 'lib' ] + ['t/lib'] + ['lib/Chariot/WebApp/Controller'] + GetPerlLibPaths()
     let fname = TranslateModuleName( GetCursorModuleName() )
 
     for p in paths
@@ -47,12 +47,36 @@ function! FindModuleFileInPaths()
     echo "File not found: " . fname
 endfunction
 
-nmap fm :call FindModuleFileInPaths() <cr>
+function! FindModuleFileInPathsVsplit()
+    let paths = [ 'lib' ] + ['t/lib'] + ['lib/Chariot/WebApp/Controller'] + GetPerlLibPaths()
+    let fname = TranslateModuleName( GetCursorModuleName() )
+
+    for p in paths
+        let f = p . '/' . fname
+        if filereadable(f)
+            exec "vs " . f
+            return 1
+        endif
+    endfor
+
+    echo "File not found: " . fname
+endfunction
+
+function! FormatJsonString()
+:%!python -mjson.tool
+endfunction
+
+
+"nmap fm :call FindModuleFileInPaths() <cr>
+nmap fv :call FindModuleFileInPathsVsplit() <cr>
+
+"format json string using python module json.tool
+"nmap jm :call FormatJsonString() <cr>
 
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.lua" -o -name "*.xml" > cscope.files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -62,7 +86,7 @@ endfun
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
 colorscheme darkblue
-set path+=~/openapi/pfsys-Chariot2/**/*
+set path+=/home/jesse/Work/cubegun/**
 
 
 " a.vim
@@ -104,15 +128,26 @@ endfunction
 command! -nargs=1 Pme call OpenPerlModule(<f-args>)
 
 
+function! CsFindMe(cmd)
+   " let word = expand<"cWORD">
+    let cw=  expand("<cword>")
+    "let cw = substitute( expand("<cWORD>"), '\(\w\+::\).*$', '\1', '' )
+    execute "cs find " a:cmd cw 
+endfunction
+
+
+nmap fm :call CsFindMe('s') <cr>
+nmap fc :call CsFindMe('c') <cr>
+nmap fg :call CsFindMe('g') <cr>
+
+
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " cscope setting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("cscope")
-  if MySys() == "linux"
-    set csprg=/usr/bin/cscope
-  else
-    set csprg=cscope
-  endif
+  set csprg=/usr/bin/cscope
   set csto=1
   set cst
   set nocsverb
@@ -122,15 +157,6 @@ if has("cscope")
   endif
   set csverb
 endif
-
-nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 
 " autoloading cscope db
@@ -157,17 +183,19 @@ autocmd FileType vim map <buffer> <leader><space> :w!<cr>:source %<cr>
 au FileType html set ft=xml
 au FileType html set syntax=html
 
+au FileType perl set ft=perl
+
 """"""""""""""""""""""""""""""
 " C/C++
 """""""""""""""""""""""""""""""
 autocmd FileType c,cpp  map <buffer> <leader><space> :make<cr>
 
 "file encoding auto detect
-map ,t :FencAutoDetect<cr>
-nmap ,t :FencAutoDetect<cr>
+map <leader>t :FencAutoDetect<cr>
+nmap <leader>t :FencAutoDetect<cr>
 "
 set fileencoding=utf8
-set fileencodings=utf-8,gb2312,default
+set fileencodings=utf-8,gb2312
 
 " git blame 
 vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
