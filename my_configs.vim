@@ -82,7 +82,7 @@ nmap fg :call CsFindMe('g') <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" > cscope.files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.java" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/local/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -146,6 +146,10 @@ map ,a :A<Enter>
 map ,p :set paste<Enter> i
 
 let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
+" 设置宽度
+let NERDTreeWinSize=55
+" " 在终端启动vim时，共享NERDTree
+"let g:nerdtree_tabs_open_on_console_startup=1
 
 " for php
 map <C-P> :!/usr/bin/php5 -f %<CR>
@@ -202,7 +206,13 @@ map ,t :FencAutoDetect<cr>
 nmap ,t :FencAutoDetect<cr>
 "
 set fileencoding=utf8
-set fileencodings=euc-jp,utf-8,gb2312
+set fileencodings=utf-8,gb2312
 
 " git blame 
 vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
+
+" maven
+au Filetype java compiler mvn
+au Filetype pom compiler mvn
+
+Plugin 'mikelue/vim-maven-plugin'
