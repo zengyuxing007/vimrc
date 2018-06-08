@@ -23,6 +23,7 @@ au BufNewFile,BufRead *.perl setf perl
 au BufNewFile,BufRead *.t setf perl
 
 
+au FileType cpp call CppUserDefineColor()
 
 """"""""""""""""""""""""""""""
 " => JavaScript section
@@ -38,7 +39,7 @@ au FileType javascript inoremap <buffer> $r return
 au FileType javascript inoremap <buffer> $f //--- PH ----------------------------------------------<esc>FP2xi
 
 function! JavaScriptFold() 
-    setl foldmethod=syntax
+    setl foldmethod=manual
     setl foldlevelstart=1
     syn region foldBraces start=/{/ end=/}/ transparent fold keepend extend
 
@@ -46,6 +47,10 @@ function! JavaScriptFold()
         return substitute(getline(v:foldstart), '{.*', '{...}', '')
     endfunction
     setl foldtext=FoldText()
+endfunction
+
+function! CppUserDefineColor()
+    syn keyword   cType    UInt64 UInt32 UInt16 UInt8 Int64 Int32 Int16 Int8
 endfunction
 
 
