@@ -95,6 +95,7 @@ map ,a :A<Enter>
 map ,p :set paste<Enter> i
 
 let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
+let NERDTreeWinSize=55
 
 " for php
 map <C-P> :!/usr/bin/php5 -f %<CR>
