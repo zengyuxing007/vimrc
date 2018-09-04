@@ -76,7 +76,7 @@ nmap fv :call FindModuleFileInPathsVsplit() <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" > cscope.files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -95,7 +95,21 @@ map ,a :A<Enter>
 map ,p :set paste<Enter> i
 
 let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
-let NERDTreeWinSize=55
+let NERDTreeWinSize=30
+
+function! JesseNERDWinSizePlusPlus()
+    let g:NERDTreeWinSize+=2
+    execute "NERDTree"
+endfunction
+
+function! JesseNERDWinSizeSubSub()
+    let g:NERDTreeWinSize-=2
+    execute "NERDTree"
+endfunction
+
+nmap fa :call JesseNERDWinSizePlusPlus() <cr>
+nmap fz :call JesseNERDWinSizeSubSub() <cr>
+
 
 " for php
 map <C-P> :!/usr/bin/php5 -f %<CR>
