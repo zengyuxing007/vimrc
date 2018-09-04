@@ -1,3 +1,5 @@
+"!how to  write vim-script!
+"https://www.ibm.com/developerworks/cn/linux/l-vim-script-1/index.html
 let g:fencview_autodetect=1
 
 set term=dtterm
