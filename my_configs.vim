@@ -88,7 +88,7 @@ endfun
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
 colorscheme darkblue
-set path+=/home/jesse/Work/cubegun/**
+set path+=./vendor
 
 
 " a.vim
@@ -97,7 +97,7 @@ map ,a :A<Enter>
 map ,p :set paste<Enter> i
 
 let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
-let NERDTreeWinSize=30
+let NERDTreeWinSize=45
 
 function! JesseNERDWinSizePlusPlus()
     let g:NERDTreeWinSize+=2
@@ -216,3 +216,9 @@ set fileencodings=utf-8,gb2312
 
 " git blame 
 vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
+
+
+call plug#begin('~/.vim_runtime/plugged') 
+Plug 'google/vim-maktaba'
+Plug 'bazelbuild/vim-bazel'
+call plug#end()
