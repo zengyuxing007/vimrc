@@ -62,6 +62,12 @@ I recommend reading the docs of these plugins to understand them better. Each of
 * [open_file_under_cursor.vim](https://github.com/amix/open_file_under_cursor.vim): Open file under cursor when pressing `gf`
 
 
+## 添加插件
+
+可以使用vim-plug 方式添加插件，具体使用说明见：
+
+https://github.com/junegunn/vim-plug
+
 ## What color schemes are included?
 
 * [peaksea](https://github.com/vim-scripts/peaksea): My favorite!
