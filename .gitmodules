@@ -59,5 +59,14 @@
 	path = sources_misc/vim-markdown
 	url = http://github.com/tpope/vim-markdown.git
 [submodule "sources_plugins/a"]
-        path = sources_plugins/a
-        url = git://github.com/vim-scripts/a.vim.git
+    path = sources_plugins/a
+    url = git://github.com/vim-scripts/a.vim.git
+[submodule "bundle/Vundle.vim"]
+    path = bundle/Vundle.vim
+    url = https://github.com/VundleVim/Vundle.vim.git
+[submodule "bundle/YouCompleteMe"]
+    path = bundle/YouCompleteMe
+    url = https://github.com/Valloric/YouCompleteMe.git
+[submodule "bundle/vim-yaml-formatter"]
+    path = bundle/vim-yaml-formatter
+    url = https://github.com/tarekbecker/vim-yaml-formatter.git
