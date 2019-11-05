@@ -78,7 +78,7 @@ nmap fv :call FindModuleFileInPathsVsplit() <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" > cscope.files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -88,6 +88,7 @@ endfun
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
 colorscheme darkblue
+"colorscheme desert
 set path+=./vendor
 
 
@@ -235,7 +236,19 @@ Plugin 'Valloric/YouCompleteMe'
 
 Plugin 'tarekbecker/vim-yaml-formatter'
 
+Plugin 'fatih/vim-go'
+
+Plugin 'tpope/vim-fugitive'
+
+Plugin 'git://git.wincent.com/command-t.git'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+let g:ycm_server_python_interpreter = '/usr/bin/python3'
+
+"set path+=/home/jesse/serviceMesh/envoy-gf/*/**
+"set path+=/home/jesse/serviceMesh/envoy-develop/*/**
+set path+=./*/**
