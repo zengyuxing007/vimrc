@@ -78,12 +78,13 @@ nmap fv :call FindModuleFileInPathsVsplit() <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" > cscope.files
+:!find . -path ./.bak -path ./bazel-genfiles -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" > cscope.files
 :!cscope -bkq -i cscope.files
-:!/usr/bin/ctags -L cscope.files
+:!/usr/local/bin/ctags -L cscope.files
 :!rm -f cscope.files
 :cs reset
 endfun
+
 
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
@@ -158,7 +159,8 @@ nmap fm :call CsFindMe('s') <cr>
 nmap fc :call CsFindMe('c') <cr>
 nmap fg :call CsFindMe('g') <cr>
 
-
+let g:ycm_global_ycm_extra_conf= '~/.vim_runtime/bundle/YouCompleteMe/third_party/ycmd/cpp/.ycm_extra_conf.py'
+let g:ycm_show_diagnostics_ui = 0
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -222,6 +224,9 @@ vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p
 call plug#begin('~/.vim_runtime/plugged') 
 Plug 'google/vim-maktaba'
 Plug 'bazelbuild/vim-bazel'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'skywind3000/asyncrun.vim'
 call plug#end()
 
 
@@ -242,6 +247,7 @@ Plugin 'tpope/vim-fugitive'
 
 Plugin 'git://git.wincent.com/command-t.git'
 
+Plugin 'Yggdroot/LeaderF'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -252,3 +258,52 @@ let g:ycm_server_python_interpreter = '/usr/bin/python3'
 "set path+=/home/jesse/serviceMesh/envoy-gf/*/**
 "set path+=/home/jesse/serviceMesh/envoy-develop/*/**
 set path+=./*/**
+
+" some for git mergr using vimdiff
+set laststatus=2 "show the status line
+set statusline=%-10.3n  "buffer number
+
+map <silent> <leader>2 :diffget 2<CR> :diffupdate<CR>
+map <silent> <leader>3 :diffget 3<CR> :diffupdate<CR>
+map <silent> <leader>4 :diffget 4<CR> :diffupdate<CR>
+
+
+" search word under cursor, the pattern is treated as regex, and enter normal mode directly
+noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search word under cursor, the pattern is treated as regex,
+" append the result to previous search results.
+noremap <C-G> :<C-U><C-R>=printf("Leaderf! rg --append -e %s ", expand("<cword>"))<CR>
+" search word under cursor literally only in current buffer
+noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg -F --current-buffer -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally, don't quit LeaderF after accepting an entry
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F --stayOpen -e %s ", leaderf#Rg#visual())<CR>
+" recall last search. If the result window is closed, reopen it.
+noremap go :<C-U>Leaderf! rg --stayOpen --recall<CR>
+
+" search word under cursor in *.h and *.cpp files.
+noremap <Leader>c :<C-U><C-R>=printf("Leaderf! rg -e %s -g *.h -g *.cc -g *.cpp -g !bazel-genfiles/*", expand("<cword>"))<CR>
+
+
+" FZF vim plugin settings
+
+map ,q :FZF<Enter>
+
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+" [Buffers] 如果可能跳到已存在窗口
+let g:fzf_buffers_jump = 1
+
+
+
+" automatically open quickfix window when AsyncRun command is executed
+" set the quickfix window 6 lines height.
+let g:asyncrun_open = 6
+
+" ring the bell to notify you job finished
+let g:asyncrun_bell = 1
+
+" F10 to toggle quickfix window
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
