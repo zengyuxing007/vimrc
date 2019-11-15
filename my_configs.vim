@@ -245,7 +245,7 @@ Plugin 'fatih/vim-go'
 
 Plugin 'tpope/vim-fugitive'
 
-Plugin 'git://git.wincent.com/command-t.git'
+"Plugin 'git://git.wincent.com/command-t.git'
 
 Plugin 'Yggdroot/LeaderF'
 
