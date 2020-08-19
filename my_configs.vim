@@ -2,7 +2,7 @@
 "https://www.ibm.com/developerworks/cn/linux/l-vim-script-1/index.html
 let g:fencview_autodetect=1
 
-set term=dtterm
+set term=xterm
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
@@ -13,6 +13,14 @@ map <S-m> :tabprev<cr>
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+if has('clipboard')
+	if has('unnamedplus')  " When possible use + register for copy-paste
+		set clipboard=unnamed,unnamedplus
+	else         " On mac and Windows, use * register for copy-paste
+		set clipboard=unnamed
+	endif
+endif
 
 
 
@@ -78,7 +86,10 @@ nmap fv :call FindModuleFileInPathsVsplit() <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path ./.bak -path ./bazel-genfiles -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" > cscope.files
+:!find . -path ./.bak -path ./bazel-genfiles -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.py" -o -name "*.proto" -o -name "*.java" > cscope.files
+:!find ./bazel-genfiles/api -path ./.bak -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" >> cscope.files
+:!find ./bazel-genfiles/external/envoy_api -path ./.bak -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.php" -o -name "*.go" -o -name "*.proto" >> cscope.files
+
 :!cscope -bkq -i cscope.files
 :!/usr/local/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -191,6 +202,9 @@ function! LoadCscope()
 endfunction
 au BufEnter /* call LoadCscope()
 
+
+
+
 """""""""""""""""""""""""""""""
 " Vim section
 """""""""""""""""""""""""""""""
@@ -227,6 +241,13 @@ Plug 'bazelbuild/vim-bazel'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'skywind3000/asyncrun.vim'
+
+Plug 'Shougo/unite.vim'
+Plug 'devjoe/vim-codequery'
+Plug 'tpope/vim-dispatch'
+
+Plug 'prabirshrestha/async.vim'
+"Plug 'prabirshrestha/vim-lsp'
 call plug#end()
 
 
@@ -248,6 +269,7 @@ Plugin 'tpope/vim-fugitive'
 "Plugin 'git://git.wincent.com/command-t.git'
 
 Plugin 'Yggdroot/LeaderF'
+Plugin 'lyuts/vim-rtags'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -256,8 +278,9 @@ filetype plugin indent on    " required
 let g:ycm_server_python_interpreter = '/usr/bin/python3'
 
 "set path+=/home/jesse/serviceMesh/envoy-gf/*/**
-"set path+=/home/jesse/serviceMesh/envoy-develop/*/**
+set path+=/home/hzzengyuxing/serviceMesh/envoy/*/**
 set path+=./*/**
+set path+=./external/*/**
 
 " some for git mergr using vimdiff
 set laststatus=2 "show the status line
@@ -307,3 +330,53 @@ let g:asyncrun_bell = 1
 
 " F10 to toggle quickfix window
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
+
+
+
+function! Formatonsave()
+  let l:formatdiff = 1
+  py3file /home/hzzengyuxing/.clang-format.py
+endfunction
+
+autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
+
+
+" map <C-I> :pyf /home/jesse/.clang-format.py<cr>
+" imap <C-I> <c-o>:pyf /home/jesse/.clang-format.py<cr>
+set number
+
+let g:rtagsUseLocationList = 0
+let g:rtagsJumpStackMaxSize = 1000
+
+
+" CodeQuery plugin setting
+let g:codequery_disable_qf_key_bindings = 1
+let g:codequery_trigger_build_db_when_db_not_found = 1
+nnoremap <space><CR> :CodeQuery Symbol<CR>
+
+nnoremap <space>c :CodeQueryMenu Unite Full<CR>
+nnoremap <space>; :CodeQueryMenu Unite Magic<CR>
+  
+" Or enable typing (to search menu items) by default
+"nnoremap <space>\ :CodeQueryMenu Unite Magic<CR>A
+"
+
+"ccls
+" Register ccls C++ lanuage server.
+"if executable('ccls')
+"   au User lsp_setup call lsp#register_server({
+"      \ 'name': 'ccls',
+"      \ 'cmd': {server_info->['ccls']},
+"      \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+"      \ 'initialization_options': {'cache': {'directory': '/tmp/ccls/cache' }},
+"      \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+"      \ })
+"endif
+"
+
+" Key bindings for vim-lsp.
+"nn <silent> <M-d> :LspDefinition<cr>
+"nn <silent> <M-r> :LspReferences<cr>
+"nn <f2> :LspRename<cr>
+"nn <silent> <M-a> :LspWorkspaceSymbol<cr>
+"nn <silent> <M-l> :LspDocumentSymbol<cr>
