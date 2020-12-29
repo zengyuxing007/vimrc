@@ -99,8 +99,9 @@ endfun
 
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
-colorscheme darkblue
+"colorscheme darkblue
 "colorscheme desert
+colorscheme default
 set path+=./vendor
 
 
@@ -111,6 +112,7 @@ map ,p :set paste<Enter> i
 
 let NERDTreeIgnore=['\.vim$', '\~$','\.out' , '\.o']
 let NERDTreeWinSize=45
+"let NERDTreeQuitOnOpen = 1
 
 function! JesseNERDWinSizePlusPlus()
     let g:NERDTreeWinSize+=2
@@ -172,6 +174,7 @@ nmap fg :call CsFindMe('g') <cr>
 
 let g:ycm_global_ycm_extra_conf= '~/.vim_runtime/bundle/YouCompleteMe/third_party/ycmd/cpp/.ycm_extra_conf.py'
 let g:ycm_show_diagnostics_ui = 0
+"set timeoutlen=1 ttimeoutlen=0
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -237,7 +240,7 @@ vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p
 
 call plug#begin('~/.vim_runtime/plugged') 
 Plug 'google/vim-maktaba'
-Plug 'bazelbuild/vim-bazel'
+"Plug 'bazelbuild/vim-bazel'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'skywind3000/asyncrun.vim'
@@ -245,6 +248,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'Shougo/unite.vim'
 Plug 'devjoe/vim-codequery'
 Plug 'tpope/vim-dispatch'
+Plug 'preservim/nerdtree'
 
 Plug 'prabirshrestha/async.vim'
 "Plug 'prabirshrestha/vim-lsp'
@@ -264,7 +268,7 @@ Plugin 'tarekbecker/vim-yaml-formatter'
 
 Plugin 'fatih/vim-go'
 
-Plugin 'tpope/vim-fugitive'
+"Plugin 'tpope/vim-fugitive'
 
 "Plugin 'git://git.wincent.com/command-t.git'
 
@@ -275,10 +279,10 @@ Plugin 'lyuts/vim-rtags'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-let g:ycm_server_python_interpreter = '/usr/bin/python3'
+let g:ycm_server_python_interpreter = '/usr/bin/python'
 
 "set path+=/home/jesse/serviceMesh/envoy-gf/*/**
-set path+=/home/hzzengyuxing/serviceMesh/envoy/*/**
+set path+=/home/hzzengyuxing/Work/envoy/*/**
 set path+=./*/**
 set path+=./external/*/**
 
@@ -311,13 +315,18 @@ noremap <Leader>c :<C-U><C-R>=printf("Leaderf! rg -e %s -g *.h -g *.cc -g *.cpp 
 
 map ,q :FZF<Enter>
 
+
 " This is the default extra key bindings
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+  \ 'ctrl-v': 'split',
+  \ 'ctrl-x': 'vsplit' }
 " [Buffers] 如果可能跳到已存在窗口
 let g:fzf_buffers_jump = 1
+
+"nmap <C-p> :Files<CR>
+nmap <C-e> :Buffers<CR>
+"let g:fzf_action = { 'ctrl-e': 'edit' }
 
 
 
@@ -335,7 +344,8 @@ nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
 function! Formatonsave()
   let l:formatdiff = 1
-  py3file /home/hzzengyuxing/.clang-format.py
+  "py3file /home/hzzengyuxing/.clang-format.py
+  pyfile /home/hzzengyuxing/.clang-format.py
 endfunction
 
 autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
@@ -380,3 +390,5 @@ nnoremap <space>; :CodeQueryMenu Unite Magic<CR>
 "nn <f2> :LspRename<cr>
 "nn <silent> <M-a> :LspWorkspaceSymbol<cr>
 "nn <silent> <M-l> :LspDocumentSymbol<cr>
+"
+"let g:go_gopls_enabled = 0
