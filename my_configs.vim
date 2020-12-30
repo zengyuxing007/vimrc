@@ -82,7 +82,7 @@ nmap fg :call CsFindMe('g') <cr>
 
 " make tags
 fun! MAKETAGS()
-:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.cpp" -o -name "*.c" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.java" > cscope.files
+:!find . -path './someDir' -prune -o -name "*.h" -o -name "*.hpp" -o -name "*.cc" -o -name "*.cpp" -o -name "*.c" -o -name "*.cs" -o -name "*.lua" -o -name "*.xml" -o -name "*.java" > cscope.files
 :!cscope -bkq -i cscope.files
 :!/usr/local/bin/ctags -L cscope.files
 :!rm -f cscope.files
@@ -105,7 +105,7 @@ endfunction
 
 " key map
 map  <leader>cc :up<CR>:call MAKETAGS()<CR>
-colorscheme darkblue
+colorscheme default
 set path+=~/openapi/pfsys-Chariot2/**/*
 
 
@@ -211,8 +211,20 @@ set fileencodings=utf-8,gb2312
 " git blame 
 vmap b :!git blame =expand("%:p")  \| sed -n =line("',=line("'>") p 
 
+call plug#begin('~/.vim_runtime/plugged')
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+call plug#end()
+
 " maven
 au Filetype java compiler mvn
 au Filetype pom compiler mvn
 
 Plugin 'mikelue/vim-maven-plugin'
+
+function! Formatonsave()
+  let l:formatdiff = 1
+  "py3file /home/hzzengyuxing/.clang-format.py
+  pyfile /User/yuxingzeng/.clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.hpp,*.cc,*.cpp call Formatonsave()
